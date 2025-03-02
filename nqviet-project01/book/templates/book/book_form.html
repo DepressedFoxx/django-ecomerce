@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Thêm/Sửa Sách</title>
+</head>
+<body>
+    <h1>Thêm/Sửa Sách</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Lưu</button>
+    </form>
+    <a href="{% url 'book_list' %}">Quay lại danh sách</a>
+</body>
+</html>

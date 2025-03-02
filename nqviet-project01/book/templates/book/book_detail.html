@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chi Tiết Sách - {{ book.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container {
+            flex: 1;
+        }
+        .navbar {
+            background-color: #007bff;
+        }
+        .navbar-brand, .nav-link {
+            color: #fff !important;
+        }
+        .book-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .book-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        .book-details {
+            padding-left: 20px;
+        }
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #d9534f;
+        }
+        .btn-cart {
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+        }
+        .btn-cart:hover {
+            background-color: #218838;
+        }
+        .rating {
+            color: #ffcc00;
+            font-size: 18px;
+        }
+        .description {
+            text-align: justify;
+            color: #555;
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Thanh điều hướng (Header) -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'book:book_list' %}">📚 Book Store</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <span class="nav-link">Xin chào, {{ user.username }}!</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'book:logout' %}">Đăng xuất</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'book:login' %}">Đăng nhập</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'cart:cart_detail' %}">🛒 Giỏ hàng</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Chi tiết sách -->
+<div class="container">
+    <div class="book-container row">
+        <!-- Hình ảnh sách -->
+        <div class="col-md-5 text-center">
+            {% if book.image %}
+                <img src="{{ book.image.url }}" alt="{{ book.title }}" class="book-image">
+            {% else %}
+                <img src="https://salt.tikicdn.com/cache/w1200/ts/product/26/0a/27/c8e87ec1405dacc5be3939074541906e.jpg" alt="Không có ảnh" class="book-image">
+            {% endif %}
+        </div>
+
+        <!-- Thông tin sách -->
+        <div class="col-md-7 book-details">
+            <h2 class="mb-3">{{ book.title }}</h2>
+            <p><strong>Tác giả:</strong> {{ book.author }}</p>
+            <p class="price">💰 {{ book.price }} VND</p>
+
+            <!-- Đánh giá sao -->
+            <p class="rating">⭐️⭐️⭐️⭐️☆ (4.5/5)</p>
+
+            <p class="description"><strong>Mô tả:</strong> {{ book.description }}</p>
+
+            <!-- Nút hành động -->
+            <a href="{% url 'cart:add_to_cart' book.id %}" class="btn btn-cart btn-lg">🛒 Thêm vào giỏ hàng</a>
+            <a href="{% url 'book:book_list' %}" class="btn btn-secondary btn-lg">⬅ Quay lại</a>
+        </div>
+    </div>
+</div>
+
+<!-- Footer (luôn nằm dưới) -->
+<footer class="footer">
+    <p>© 2025 Book Store | Liên hệ: support@bookstore.com</p>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

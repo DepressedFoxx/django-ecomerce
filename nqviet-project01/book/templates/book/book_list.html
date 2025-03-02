@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Trang Bán Sách</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .navbar {
+            background-color: #007bff;
+            padding: 15px;
+        }
+        .navbar-brand, .nav-link {
+            color: #fff !important;
+            font-weight: bold;
+        }
+        .navbar-nav .nav-item:hover .nav-link {
+            text-decoration: underline;
+        }
+        .book-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+            height: 100%;
+        }
+        .book-card:hover {
+            transform: scale(1.05);
+        }
+        .card-body {
+            text-align: center;
+        }
+        .filter-container {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        .image-container {
+            display: flex;
+            justify-content: center;  /* Căn giữa theo chiều ngang */
+        }
+        .book-image {
+            padding-top: 20px;
+            width: 50%;  /* Chiều rộng tối đa bằng 100% của card */
+            height: 100%; /* Giữ chiều cao cố định */
+            object-fit: cover; /* Đảm bảo ảnh không bị méo */
+            border-radius: 8px; /* Bo góc nhẹ */
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="#">📚 Book Store</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <span class="nav-link">👋 Xin chào, {{ user.username }}!</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'book:logout' %}">🚪 Đăng xuất</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'book:login' %}">🔑 Đăng nhập</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'cart:cart_detail' %}">🛒 Giỏ hàng</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Search & Filter -->
+<div class="container mt-4">
+    <div class="filter-container">
+        <form method="GET" action="{% url 'book:book_list' %}" class="row g-2">
+            <div class="col-md-6">
+                <input type="text" name="search" class="form-control" placeholder="🔍 Tìm kiếm sách..." value="{{ search_query }}">
+            </div>
+            <div class="col-md-4">
+                <select name="price" class="form-select">
+                    <option value="">Sắp xếp theo giá</option>
+                    <option value="low" {% if price_filter == 'low' %}selected{% endif %}>Thấp đến cao</option>
+                    <option value="high" {% if price_filter == 'high' %}selected{% endif %}>Cao đến thấp</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Lọc</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Book List -->
+<div class="container mt-4">
+    <h2 class="text-center mb-4">📖 Danh Sách Sách</h2>
+    <div class="row">
+        {% for book in books %}
+        <div class="col-md-4 mb-4">
+            <div class="card book-card">
+                <div class="image-container">
+                    <img src="{{ book.image.url }}" alt="{{ book.title }}" class="book-image"
+                         onerror="this.onerror=null; this.src='https://salt.tikicdn.com/cache/w1200/ts/product/26/0a/27/c8e87ec1405dacc5be3939074541906e.jpg';">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ book.title }}</h5>
+                    <p class="card-text">✍ Tác giả: {{ book.author }}</p>
+                    <p class="card-text"><strong>💰 {{ book.price }} VND</strong></p>
+                    <a href="{% url 'book:book_detail' book.id %}" class="btn btn-primary">📘 Xem chi tiết</a>
+                    <a href="{% url 'cart:add_to_cart' book.id %}" class="btn btn-success">🛒 Thêm vào giỏ</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">Không tìm thấy sách nào.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <p>© 2025 Book Store | Liên hệ: support@bookstore.com</p>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
